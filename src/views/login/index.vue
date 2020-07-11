@@ -4,36 +4,51 @@
     <van-nav-bar class="page-nav-bar" title="登录" />
 
     <!-- 表单 -->
-    <van-form @submit="onSubmit" autocomplete="off">
+    <van-form @submit="onSubmit" autocomplete="off" ref="loginForm">
       <!-- <van-cell-group> -->
       <van-field
         placeholder="请输入手机号"
-        name="用户名"
+        name="mobile"
         v-model="user.mobile"
         clearable
         :rules="userFormRules.mobile"
+        type="number"
       >
         <!-- 通过插槽处理自定义图标 -->
         <i slot="left-icon" class="toutiao toutiao-shouji"></i>
       </van-field>
-      <van-field placeholder="请输入短信验证码" name="验证码" v-model="user.code" :rules="userFormRules.code">
+      <van-field placeholder="请输入短信验证码" name="code" v-model="user.code" :rules="userFormRules.code">
         <i slot="left-icon" class="toutiao toutiao-yanzhengma"></i>
         <template #button>
           <!-- 新版本插槽的写法 -->
-          <van-button class="send-sms-btn" round size="small" type="default">发送验证码</van-button>
+          <!-- 倒计时 -->
+          <van-count-down
+            :time="1000 * 5"
+            v-if="isCountDownShow"
+            @finish="isCountDownShow=false"
+            format="ss s"
+          />
+          <van-button
+            class="send-sms-btn"
+            v-else
+            round
+            type="default"
+            native-type="button"
+            @click="sendSms"
+          >发送验证码</van-button>
         </template>
       </van-field>
       <!-- </van-cell-group> -->
       <!-- 按钮 -->
       <div class="login-btn-wrap">
-        <van-button type="info" block form-type="submit" class="login-btn">登录</van-button>
+        <van-button type="info" block native-type="submit" class="login-btn">登录</van-button>
       </div>
     </van-form>
   </div>
 </template>
 
 <script>
-import { login } from '@/api/user'
+import { login, sendSms } from '@/api/user'
 export default {
   // 组件名称
   name: 'login',
@@ -62,7 +77,9 @@ export default {
           { required: true, message: '请输入验证码' },
           { pattern: /^\d{6}$/, message: '请输入正确的验证码' }
         ]
-      }
+      },
+      // 控制倒计时的显示隐藏
+      isCountDownShow: false
     }
   },
   // 计算属性
@@ -89,9 +106,38 @@ export default {
         // 登录成功
         console.log(res)
         this.$toast.success('登录成功')
+        // 保存token
+        this.$store.commit('setUser', res.data.data)
+        // 跳转
+        this.$router.back()
       } catch (err) {
         // 登录失败
         this.$toast.fail('手机号或验证码不正确')
+      }
+    },
+    // 点击发送验证码
+    async sendSms () {
+      try {
+        // validate 返回promise对象
+        await this.$refs.loginForm.validate('mobile')
+      } catch (err) {
+        // 验证失败
+        return console.log('验证码不正确', err)
+      }
+      // 验证通过
+      // 显示倒计时
+      this.isCountDownShow = true
+      // 发送验证码
+      try {
+        var res = await sendSms(this.user.mobile)
+        console.log(res)
+        this.$toast.success('发送成功')
+      } catch (err) {
+        if (err.response.status === 429) {
+          this.$toast.fail('请求次数过多，请稍后在试')
+        } else {
+          this.$toast.fail('获取失败')
+        }
       }
     }
   },
@@ -100,7 +146,7 @@ export default {
    * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
    */
   created () {
-    console.log(this)
+    // console.log(this)
   },
   /**
    * el 被新创建的 vm.$ el 替换，并挂载到实例上去之后调用该钩子。
