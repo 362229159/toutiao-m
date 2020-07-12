@@ -4,6 +4,8 @@
     <van-nav-bar class="page-nav-bar" title="登录" />
 
     <!-- 表单 -->
+    <!-- 当表单提交的时候，会自动触发表单验证规则。验证通过后，会触发submit事件，验证失败，不会触发submit事件 -->
+
     <van-form @submit="onSubmit" autocomplete="off" ref="loginForm">
       <!-- <van-cell-group> -->
       <van-field
@@ -13,6 +15,7 @@
         clearable
         :rules="userFormRules.mobile"
         type="number"
+        maxlength="11"
       >
         <!-- 通过插槽处理自定义图标 -->
         <i slot="left-icon" class="toutiao toutiao-shouji"></i>
@@ -23,7 +26,7 @@
           <!-- 新版本插槽的写法 -->
           <!-- 倒计时 -->
           <van-count-down
-            :time="1000 * 5"
+            :time="1000 * 59"
             v-if="isCountDownShow"
             @finish="isCountDownShow=false"
             format="ss s"
@@ -61,8 +64,8 @@ export default {
     return {
       // 登录信息对象
       user: {
-        mobile: '',
-        code: ''
+        mobile: '13911111111',
+        code: '246810'
       },
       // 登录验证规则
       userFormRules: {
@@ -133,6 +136,7 @@ export default {
         console.log(res)
         this.$toast.success('发送成功')
       } catch (err) {
+        // 发送失败，关闭倒计时
         if (err.response.status === 429) {
           this.$toast.fail('请求次数过多，请稍后在试')
         } else {

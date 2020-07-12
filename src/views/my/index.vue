@@ -7,8 +7,8 @@
         <!-- 基本信息模块 -->
         <div class="base-info">
           <div class="left">
-            <van-image class="avatar" round src="https://img.yzcdn.cn/vant/cat.jpeg" />
-            <span class="name">俗人</span>
+            <van-image class="avatar" round :src="userInfo.photo" />
+            <span class="name">{{userInfo.name}}</span>
           </div>
           <div class="right">
             <van-button round size="mini" class="text">编辑资料</van-button>
@@ -17,19 +17,19 @@
         <!-- 状态 -->
         <div class="data-stats">
           <div class="data-item">
-            <span class="count">8</span>
+            <span class="count">{{userInfo.art_count}}</span>
             <span class="text">头条</span>
           </div>
           <div class="data-item">
-            <span class="count">8</span>
+            <span class="count">{{userInfo.follow_count}}</span>
             <span class="text">关注</span>
           </div>
           <div class="data-item">
-            <span class="count">8</span>
+            <span class="count">{{userInfo.fans_count}}</span>
             <span class="text">粉丝</span>
           </div>
           <div class="data-item">
-            <span class="count">8</span>
+            <span class="count">{{userInfo.like_count}}</span>
             <span class="text">获赞</span>
           </div>
         </div>
@@ -66,6 +66,8 @@
 
 <script>
 import { mapState } from 'vuex'
+// 导入getUserInfo接口
+import { getUserInfo } from '@/api/user'
 export default {
   // 组件名称
   name: 'my',
@@ -75,7 +77,10 @@ export default {
   components: {},
   // 组件状态值
   data () {
-    return {}
+    return {
+      // 用户信息对象
+      userInfo: {}
+    }
   },
   // 计算属性
   computed: {
@@ -86,6 +91,7 @@ export default {
   watch: {},
   // 组件方法
   methods: {
+    // 去登录页面
     goLogin () {
       this.$router.push('/login')
     },
@@ -103,13 +109,29 @@ export default {
         .catch(() => {
           console.log('取消退出')
         })
+    },
+    // 获取用户自己的信息
+    async loadUser () {
+      try {
+        const { data } = await getUserInfo()
+        console.log(data)
+        this.userInfo = data.data
+      } catch (err) {
+        console.log(err.response)
+        console.log('获取失败')
+      }
     }
   },
   // 以下是生命周期钩子   注：没用到的钩子请自行删除
   /**
    * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
    */
-  created () {},
+  created () {
+    // 判断用户登录后触发
+    if (this.$store.state.user) {
+      this.loadUser()
+    }
+  },
   /**
    * el 被新创建的 vm.$ el 替换，并挂载到实例上去之后调用该钩子。
    * 如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$ el 也在文档内。

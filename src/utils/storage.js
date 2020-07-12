@@ -13,10 +13,16 @@ export const setItem = (key, value) => {
 // 获取token
 export const getItem = key => {
   var res = window.localStorage.getItem(key)
-  if (typeof res === 'object') {
-    res = JSON.parse(res)
+  // if (typeof res === 'object') {
+  //   res = JSON.parse(res)
+  // }
+  // return res
+  // 使用try catch
+  try {
+    return JSON.parse(res)
+  } catch (err) {
+    console.log(err)
   }
-  return res
 }
 
 // 删除token
