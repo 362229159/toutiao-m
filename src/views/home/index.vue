@@ -1,40 +1,158 @@
 <template>
-    <div class="">首页</div>
+  <div class="home-container">
+    <!-- 头部搜索模块 -->
+    <van-nav-bar class="page-nav-bar" fixed>
+      <van-button type="info" slot="title" size="mini" round icon="search" class="search-btn">搜索</van-button>
+    </van-nav-bar>
+
+    <!-- 标签页导航 -->
+    <!-- animated转场动画  swipeable开启手势滑动切换-->
+    <!-- :lazy-render="false" 不开启延迟渲染（首次切换到标签时才触发内容渲染） -->
+    <van-tabs class="channel-tabs" v-model="active" animated swipeable>
+      <!-- 频道 -->
+      <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
+        <!-- 频道的文章列表 -->
+        <article-list :channel="channel"></article-list>
+      </van-tab>
+      <!-- 定义汉堡插槽 -->
+      <div slot="nav-right" class="placeholder"></div>
+      <div slot="nav-right" class="hamburger-btn">
+        <i class="toutiao toutiao-gengduo"></i>
+      </div>
+    </van-tabs>
+  </div>
 </template>
 
 <script>
+import { getUserChannels } from '@/api/user'
+// 导入子组件
+import ArticleList from './components/article-list'
 export default {
   // 组件名称
-  name: '',
+  name: 'home',
   // 组件参数 接收来自父组件的数据
   props: {},
   // 局部注册的组件
-  components: {},
+  components: {
+    ArticleList
+  },
   // 组件状态值
   data () {
-    return {}
+    return {
+      active: 0,
+      // 用户频道列表
+      channels: []
+    }
   },
   // 计算属性
   computed: {},
   // 侦听器
   watch: {},
   // 组件方法
-  methods: {},
+  methods: {
+    // 获取频道
+    async loadChannels () {
+      try {
+        var { data } = await getUserChannels()
+        console.log(data)
+        this.channels = data.data.channels
+      } catch (err) {
+        this.$toast.fail('获取频道失败')
+      }
+    }
+  },
   // 以下是生命周期钩子   注：没用到的钩子请自行删除
   /**
-  * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
-  */
+   * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
+   */
   created () {
+    this.loadChannels()
   },
   /**
-  * el 被新创建的 vm.$ el 替换，并挂载到实例上去之后调用该钩子。
-  * 如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$ el 也在文档内。
-  */
-  mounted () {
-  }
+   * el 被新创建的 vm.$ el 替换，并挂载到实例上去之后调用该钩子。
+   * 如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$ el 也在文档内。
+   */
+  mounted () {}
 }
 </script>
 
 <style scoped lang="less">
+// 搜索模块
+.home-container {
+  padding-top: 174px;
+  padding-bottom: 100px;
+  /deep/.van-nav-bar__title {
+    max-width: unset;
+  }
 
+  .search-btn {
+    width: 555px;
+    height: 64px;
+    background-color: #5babfb;
+  }
+}
+
+// 标签导航
+// scoped中不能给子组件设置样式，需要添加/deep/
+/deep/.channel-tabs {
+  .van-tabs__wrap {
+    position: fixed;
+    top: 92px;
+    right: 0;
+    left: 0;
+    height: 82px;
+    z-index: 1;
+    .van-tab {
+      border-right: 1px solid #edeff3;
+      min-width: 200px;
+      font-size: 30px;
+      color: #777;
+    }
+    .van-tab--active {
+      color: #333;
+    }
+    .van-tabs__nav {
+      padding-bottom: 0;
+    }
+    .van-tabs__line {
+      width: 31px;
+      bottom: 8px;
+      height: 6px;
+      background-color: pink;
+    }
+    .placeholder {
+      flex-shrink: 0; //此元素不参与flex的
+      width: 66px;
+      height: 82px;
+    }
+    // 汉堡按钮
+    .hamburger-btn {
+      position: fixed;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 66px;
+      height: 82px;
+      background-color: #fff;
+      opacity: 0.8;
+      i.toutiao {
+        font-size: 33px;
+      }
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 2px;
+        height: 58px;
+        background: url("~@/assets/gradient-gray-line.png");
+        background-size: contain;
+      }
+    }
+  }
+}
+/deep/.van-list {
+   height: 80vh;
+  overflow-y: auto;
+}
 </style>

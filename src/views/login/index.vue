@@ -1,8 +1,11 @@
 <template>
   <div class="login-container">
     <!-- 导航栏 -->
-    <van-nav-bar class="page-nav-bar" title="登录" />
-
+    <van-nav-bar class="page-nav-bar" title="登录">
+      <template #right>
+        <van-icon name="close"  @click="$router.back()" />
+      </template>
+    </van-nav-bar>
     <!-- 表单 -->
     <!-- 当表单提交的时候，会自动触发表单验证规则。验证通过后，会触发submit事件，验证失败，不会触发submit事件 -->
 

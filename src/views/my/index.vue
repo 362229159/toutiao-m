@@ -143,6 +143,7 @@ export default {
 <style scoped lang="less">
 .hearder {
   height: 361px;
+  // css中引入路径~@指向src文件夹
   background: url("~@/assets/banner.png") no-repeat;
   background-size: cover;
 }

@@ -84,3 +84,6 @@ body {
 .page-nav-bar .van-nav-bar__title {
   color: #ffffff;
 }
+.page-nav-bar .van-icon {
+  color: #ffffff !important;
+}

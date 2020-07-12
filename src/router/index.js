@@ -8,10 +8,11 @@ const routes = [
   // 导入幕里默认会打开目录下的index.vue
   {
     path: '/',
-    name: 'layout',
+    // name: 'layout', // 父路由有默认的子路由，name就没有效果了。
     component: () => import('@/views/layout'),
     children: [
-      { path: '/', name: 'home', component: () => import('@/views/home') },
+      // '' 默认子路由，只有一个
+      { path: '', name: 'home', component: () => import('@/views/home') },
       { path: '/qa', name: 'qa', component: () => import('@/views/qa') },
       {
         path: '/video',

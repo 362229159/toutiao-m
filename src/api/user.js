@@ -35,3 +35,11 @@ export const getUserInfo = () => {
     // }
   })
 }
+
+// 获取用户频道接口
+export const getUserChannels = () => {
+  return request({
+    url: '/app/v1_0/user/channels',
+    method: 'GET'
+  })
+}
