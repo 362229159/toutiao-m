@@ -3,7 +3,8 @@
     <!-- 列表 -->
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh" :success-text="refreshSuccessText">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <van-cell v-for="(item,index) in list" :key="index" :title="item.title" />
+        <!-- <van-cell v-for="(item,index) in list" :key="index" :title="item.title" /> -->
+        <article-item v-for="(article,index) in list" :key="index" :article="article"></article-item>
       </van-list>
     </van-pull-refresh>
   </div>
@@ -11,9 +12,11 @@
 
 <script>
 import { getArticleList } from '@/api/article.js'
+// 引入列表项组件
+import ArticleItem from '@/components/article-item'
 export default {
   // 组件名称
-  name: 'Article',
+  name: 'ArticleList',
   // 组件参数 接收来自父组件的数据
   props: {
     channel: {
@@ -22,7 +25,10 @@ export default {
     }
   },
   // 局部注册的组件
-  components: {},
+  components: {
+    // 列表项组件
+    ArticleItem
+  },
   // 组件状态值
   data () {
     return {

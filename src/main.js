@@ -9,6 +9,8 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 // 导入amfe-flexible，配置移动端rem基准值
 import 'amfe-flexible'
+// 导入相对时间过滤器
+import './utils/dayjs'
 // 注册Vant
 Vue.use(Vant)
 Vue.config.productionTip = false
