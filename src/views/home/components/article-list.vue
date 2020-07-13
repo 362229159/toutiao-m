@@ -64,7 +64,7 @@ export default {
         // console.log(data)
         // 解构数据
         const { results } = data.data
-        console.log(results)
+        // console.log(results)
         // 由于是滚动加载，不能直接赋值，需要添加。
         this.list.push(...results)
         // 本次加载完成，设置加载状态

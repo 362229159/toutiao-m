@@ -16,10 +16,27 @@
       </van-tab>
       <!-- 定义汉堡插槽 -->
       <div slot="nav-right" class="placeholder"></div>
-      <div slot="nav-right" class="hamburger-btn">
+      <div slot="nav-right" class="hamburger-btn" @click="isChannelEditShow=true">
         <i class="toutiao toutiao-gengduo"></i>
       </div>
     </van-tabs>
+
+    <!-- 弹出层,频道编辑 -->
+    <van-popup
+      class="edit-channel-popup"
+      v-model="isChannelEditShow"
+      position="bottom"
+      closeable
+      close-icon-position="top-left"
+      style="height:100%"
+    >
+      <!-- 编辑组件 -->
+      <channel-edit
+        :user-channels="channels"
+        :active-index.sync="active"
+        @close-popup="isChannelEditShow = false"
+      ></channel-edit>
+    </van-popup>
   </div>
 </template>
 
@@ -27,6 +44,9 @@
 import { getUserChannels } from '@/api/user'
 // 导入子组件
 import ArticleList from './components/article-list'
+import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storage'
 export default {
   // 组件名称
   name: 'home',
@@ -34,30 +54,58 @@ export default {
   props: {},
   // 局部注册的组件
   components: {
-    ArticleList
+    ArticleList,
+    ChannelEdit
   },
   // 组件状态值
   data () {
     return {
+      // 当前选中的tab栏
       active: 0,
       // 用户频道列表
-      channels: []
+      channels: [],
+      // 控制弹出层的显示隐藏
+      isChannelEditShow: false
     }
   },
   // 计算属性
-  computed: {},
+  computed: {
+    ...mapState(['user'])
+  },
   // 侦听器
   watch: {},
   // 组件方法
   methods: {
     // 获取频道
     async loadChannels () {
+      // try {
+      //   var { data } = await getUserChannels()
+      //   console.log(data)
+      //   this.channels = data.data.channels
+      // } catch (err) {
+      //   this.$toast.fail('获取频道失败')
+      // }
+
       try {
-        var { data } = await getUserChannels()
-        console.log(data)
-        this.channels = data.data.channels
+        if (this.user) {
+          // 用户登录了,获取线上的频道列表数据
+          const { data } = await getUserChannels()
+          this.channels = data.data.channels
+        } else {
+          // 用户未登录
+          var localChannels = getItem('channels')
+          if (localChannels) {
+            // 本地有存储
+            this.channels = localChannels
+          } else {
+            // 本地没有存贮,获取推荐.服务器会根据token返回不同的数据
+            const { data } = await getUserChannels()
+            this.channels = data.data.channels
+          }
+        }
       } catch (err) {
-        this.$toast.fail('获取频道失败')
+        this.$toast.fail('获取失败')
+        console.log(err)
       }
     }
   },
@@ -152,7 +200,12 @@ export default {
   }
 }
 /deep/.van-list {
-   height: 80vh;
+  height: 80vh;
   overflow-y: auto;
+}
+// 弹出层样式
+.edit-channel-popup {
+  padding-top: 100px;
+  box-sizing: border-box;
 }
 </style>
