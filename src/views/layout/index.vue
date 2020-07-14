@@ -58,6 +58,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+.layout-container {
+  padding-bottom: 100px;
+}
 // 设置字体图标的样式
 .toutiao {
   font-size: 40px;

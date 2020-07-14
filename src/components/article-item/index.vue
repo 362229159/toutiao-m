@@ -1,7 +1,17 @@
 <template>
   <div class="article-item">
     <!-- 单元格 -->
-    <van-cell>
+    <van-cell
+      :to="{
+      // name 跳转路由的名字
+      name: 'article',
+      // 传递路由动态参数
+      params: {
+        // 属性名，路由中设置的动态路由的参数名
+        articleId:article.art_id
+      }
+    }"
+    >
       <!-- 自定义左侧内容 -->
       <div slot="title" class="title">{{article.title}}</div>
       <!-- 自定义标题下方的label内容 -->

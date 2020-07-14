@@ -139,7 +139,7 @@ export default {
 // 搜索模块
 .home-container {
   padding-top: 174px;
-  padding-bottom: 100px;
+  // padding-bottom: 100px;
   /deep/.van-nav-bar__title {
     max-width: unset;
   }

@@ -2,7 +2,14 @@
   <div class="article-list">
     <!-- 列表 -->
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh" :success-text="refreshSuccessText">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+        :error.sync="error"
+        error-text="请求失败，点击重新加载"
+      >
         <!-- <van-cell v-for="(item,index) in list" :key="index" :title="item.title" /> -->
         <article-item v-for="(article,index) in list" :key="index" :article="article"></article-item>
       </van-list>
@@ -43,7 +50,9 @@ export default {
       // 是否处于加载中状态
       refreshing: false,
       // 刷新成功的文本
-      refreshSuccessText: ''
+      refreshSuccessText: '',
+      // 控制错误提示
+      error: false
     }
   },
   // 计算属性
@@ -54,6 +63,7 @@ export default {
   methods: {
     // 初始化或
     async onLoad () {
+      console.log('onload')
       try {
         // 获取列表数据
         const { data } = await getArticleList({
@@ -61,12 +71,19 @@ export default {
           timestamp: this.timestamp || Date.now(),
           with_top: 1
         })
+
+        // 测试请求失败情况
+        if (Math.random() > 0.5) {
+          this.error = true
+        }
+
         // console.log(data)
         // 解构数据
         const { results } = data.data
         // console.log(results)
         // 由于是滚动加载，不能直接赋值，需要添加。
         this.list.push(...results)
+        // this.list = this.list.concat(results)
         // 本次加载完成，设置加载状态
         this.loading = false
         // 判断resulet的长度
@@ -78,7 +95,6 @@ export default {
           this.finished = true
         }
       } catch (err) {
-        console.log(err)
         // 关闭loading
         this.loading = false
       }

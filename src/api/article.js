@@ -9,3 +9,11 @@ export const getArticleList = params => {
     params
   })
 }
+
+// 封装获取文章详情接口
+export const getArticleById = articleId => {
+  return request({
+    url: '/app/v1_0/articles/' + articleId,
+    method: 'GET'
+  })
+}
