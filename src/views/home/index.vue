@@ -2,7 +2,15 @@
   <div class="home-container">
     <!-- 头部搜索模块 -->
     <van-nav-bar class="page-nav-bar" fixed>
-      <van-button type="info" slot="title" size="mini" round icon="search" class="search-btn">搜索</van-button>
+      <van-button
+        type="info"
+        slot="title"
+        size="mini"
+        round
+        icon="search"
+        class="search-btn"
+        @click="goSearch"
+      >搜索</van-button>
     </van-nav-bar>
 
     <!-- 标签页导航 -->
@@ -15,7 +23,7 @@
         <article-list :channel="channel"></article-list>
       </van-tab>
       <!-- 定义汉堡插槽 -->
-      <div slot="nav-right" class="placeholder"></div>
+      <!-- <div slot="nav-right" class="placeholder"></div> -->
       <div slot="nav-right" class="hamburger-btn" @click="isChannelEditShow=true">
         <i class="toutiao toutiao-gengduo"></i>
       </div>
@@ -107,6 +115,9 @@ export default {
         this.$toast.fail('获取失败')
         console.log(err)
       }
+    },
+    goSearch () {
+      this.$router.push('/search')
     }
   },
   // 以下是生命周期钩子   注：没用到的钩子请自行删除
@@ -137,6 +148,7 @@ export default {
     width: 555px;
     height: 64px;
     background-color: #5babfb;
+    border: none;
   }
 }
 
@@ -150,6 +162,7 @@ export default {
     left: 0;
     height: 82px;
     z-index: 1;
+    padding-right: 66px;
     .van-tab {
       border-right: 1px solid #edeff3;
       min-width: 200px;
@@ -163,16 +176,16 @@ export default {
       padding-bottom: 0;
     }
     .van-tabs__line {
-      width: 31px;
+      width: 31px !important;
       bottom: 8px;
       height: 6px;
       background-color: pink;
     }
-    .placeholder {
-      flex-shrink: 0; //此元素不参与flex的
-      width: 66px;
-      height: 82px;
-    }
+    // .placeholder {
+    //   flex-shrink: 0; //此元素不参与flex的
+    //   width: 66px;
+    //   height: 82px;
+    // }
     // 汉堡按钮
     .hamburger-btn {
       position: fixed;
@@ -182,8 +195,10 @@ export default {
       align-items: center;
       width: 66px;
       height: 82px;
-      background-color: #fff;
-      opacity: 0.8;
+      // background-color: #fff;
+      // opacity: 0.8;
+      // 使用rgba，子元素不受影响
+      background-color: rgba(255, 255, 255,.8);
       i.toutiao {
         font-size: 33px;
       }

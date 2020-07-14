@@ -12,7 +12,9 @@ const request = axios.create({
 // 配置请求拦截器
 request.interceptors.request.use(
   config => {
+    // store.state = user: {},   进行解构
     const { user } = store.state
+    // 更严谨的判断
     if (user && user.token) {
       config.headers.Authorization = 'Bearer ' + user.token
     }
